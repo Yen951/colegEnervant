@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Timer cu Notificări - PWA</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" type="image/png" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      text-align: center;
+      background: #f0f4f8;
+    }
+    textarea {
+      width: 90%;
+      height: 150px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Timer cu Notificări - PWA</h1>
+  <p>Introdu lista de notificări: fiecare linie cu minutul|mesaj (ex: 5|Hai, trezește-te!)</p>
+  <textarea id="notificationsInput" placeholder="Ex:&#10;5|Hai, trezește-te!&#10;10|Mai ai puțin!"></textarea>
+  <br />
+  <button id="startBtn">Pornește Timer</button>
+<div id="scheduleList" style="margin-top: 20px; font-family: monospace;"></div>
+  <div id="status"></div>
+
+  <script src="app.js"></script>
+
+
+</body>
+</html>
