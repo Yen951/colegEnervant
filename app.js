@@ -41,15 +41,34 @@ function parseNotifications(text) {
   return list;
 }
 
+async function registerSW() {
+  if ('serviceWorker' in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      console.log('Service Worker înregistrat');
+      return reg;
+    } catch (error) {
+      console.error('Eroare la înregistrarea Service Worker:', error);
+      return null;
+    }
+  }
+  return null;
+}
+
 startBtn.addEventListener("click", async () => {
   statusDiv.textContent = "";
   scheduleList.textContent = "";
-
   clearAllTimers();
 
   const granted = await requestNotificationPermission();
   if (!granted) {
     statusDiv.textContent = "Permisiunea pentru notificări a fost refuzată.";
+    return;
+  }
+
+  const swRegistration = await registerSW();
+  if (!swRegistration) {
+    statusDiv.textContent = "Nu s-a putut înregistra Service Worker.";
     return;
   }
 
@@ -63,20 +82,20 @@ startBtn.addEventListener("click", async () => {
 
   notifications.forEach(notif => {
     const notifyTime = new Date(now.getTime() + notif.time * 60000);
-    
-    // Afișăm ora notificării în listă
+
     const p = document.createElement("p");
     p.textContent = `La ora ${formatTime(notifyTime)} → ${notif.message}`;
     scheduleList.appendChild(p);
 
-    // Programăm notificarea
     const timerId = setTimeout(() => {
-      new Notification('Timer', {
-        body: notif.message,
-        icon: 'icons/icon-192.png',
-        vibrate: [200, 100, 200],
-        tag: 'timer-notification'
-      });
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          command: 'showNotification',
+          message: notif.message
+        });
+      } else {
+        console.warn('Service Worker controller nu este disponibil.');
+      }
     }, notif.time * 60000);
 
     timers.push(timerId);
